@@ -1,0 +1,98 @@
+= safe-me
+
+* http://github.com/drexin/safe-me
+
+== Description:
+
+Add typechecking whenever you need it, without messing up your class files.
+
+== Install
+	
+  sudo gem install safe-me
+
+== Usage
+
+  require 'safe-me'
+
+If you don't use safe-me with rails you have to manually call
+  
+  SafeMe.init
+
+The declaration files have to be put in a folder called 'safe' in the app's root. 
+The naming convention for those files is 'class_name_safe.rb'. SafeMe automatically
+loads and evaluates those files on the call of SafeMe.init.
+
+== DSL
+
+The DSL ist very simple. Let me explain on an example:
+
+  #safe Class tells SafeMe which class it should work on
+  #be sure to have the class in scope
+  safe Foo do
+  
+    #for_method takes the name of the method to be made safe
+    #as symbol
+    for_method :a_method do
+      
+      #for each argument the method takes, you have to call argument
+      #with the type as parameter
+      argument Integer
+      
+      #there is also a method called arguments, which takes multiple types
+      #so you don't have to call argument for every single arg
+      arguments String, Array.ofType(Integer), unchecked
+    end
+  end
+  
+For now there are 5 kinds of possible argument types.
+
+- Classes
+
+You can simply pass a class as type to the argument call. There are some special cases:
+
+VarArgs: if you have a method with varargs, you have to have to pass VarArgs.ofType(Class) as the type
+Array: if you want type safe arrays, you can pass Array.ofType(Class)
+Hash: for hashes you can pass Hash.ofType(Class, Class) where the first class is for the key and the second for the value
+
+- Nilable
+
+If you also want to be able to pass nil to a method, if the argument is optional for example, you can pass nilable(Class) as type.
+
+- RespondsTo
+
+If you only want to be sure, that an argument responds to some methods you can pass responds_to(*methods) where *methods should be the method names as symbols.
+
+
+- QuacksLike
+
+If you need the same responds_to on multiple methods it can be useful to create a clean room class, that contains those methods and call quacks_like(Class) instead.
+quacks_like ensures, that every public instance method of this class is also available on the object, that gets passed to the method.
+
+- Unchecked
+
+If you have methods where some arguments should not be checked for their type, you can pass unchecked as type.
+
+== License:
+
+The MIT License
+
+Copyright (c) 2010 Dario Rexin
+
+Permission is hereby granted, free of charge, to any person obtaining
+a copy of this software and associated documentation files (the
+"Software"), to deal in the Software without restriction, including
+without limitation the rights to use, copy, modify, merge, publish,
+distribute, sublicense, and/or sell copies of the Software, and to
+permit persons to whom the Software is furnished to do so, subject to
+the following conditions:
+
+The above copyright notice and this permission notice shall be
+included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
