@@ -19,7 +19,7 @@ module TailRec
         define_method name do |*args|
           res = recur *args
           while(res.kind_of?(Array) && res.first == :__recur__) do
-            res = send("__recur_#{__method__}__".to_sym, *res.drop(1))
+            res = send("__recur_#{name}__".to_sym, *res.drop(1))
           end
           res
         end
